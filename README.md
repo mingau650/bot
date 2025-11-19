@@ -16,7 +16,7 @@ Passo-a-passo para deploy no Render (rápido):
    - Conecte sua conta ao GitHub e selecione o repositório.
    - Branch: `main` (ou a branch que você usa).
    - Environment: `Python 3`.
-   - Start Command: `python discord.py`.
+   - Start Command: `python bot.py`.
 
 3) Adicione variáveis de ambiente no Render (Settings → Environment):
    - `DISCORD_TOKEN` → o token do bot (marque como secreto).
@@ -35,7 +35,7 @@ python -m pip install -r requirements.txt
 
 # Rodar localmente (defina a variável ou use .env localmente)
 export DISCORD_TOKEN="seu_token_aqui"
-python discord.py
+python bot.py
 ```
 
 Se quiser, eu também faço o commit e dou push das mudanças para você (vou tentar agora) e, se desejar, posso criar um `render.yaml` com configurações padrão para deploy automático.
