@@ -1,10 +1,13 @@
 
 from discord.ext import commands
+import discord
+import hashlib
 import json
 import os
 import random
 import time
 import asyncio
+import sys
 
 
 # --- Configuração do Bot e Intents ---
@@ -119,7 +122,21 @@ def set_marriage(user1_id, user2_id):
     
     get_user_data(user1_id)
     get_user_data(user2_id)
-    
+    # Se user2_id for None, trata como divórcio: remove o cônjuge de ambos
+    if user2_id is None:
+        # Remove spouse do user1
+        if user1_str in data:
+            spouse = data[user1_str].get('spouse')
+            data[user1_str]['spouse'] = None
+            # Se havia um cônjuge, remove o vínculo do outro lado
+            if spouse is not None:
+                spouse_str = str(spouse)
+                if spouse_str in data:
+                    data[spouse_str]['spouse'] = None
+        save_data(data)
+        return
+
+    # Caso padrão: registra casamento entre user1 e user2
     data[user1_str]['spouse'] = user2_id
     data[user2_str]['spouse'] = user1_id
     save_data(data)
@@ -644,7 +661,7 @@ async def farm(ctx, item_name: str = None):
     embed = discord.Embed(
         title=f'🌱 Plantado com Sucesso! (INSTANTÂNEO)',
         description=f'Você plantou **{item_full_name}** no Lote **#{empty_plot_index + 1}**.',
-        color=discord.Color.brand_green()
+        color=discord.Color.green()
     )
     embed.add_field(name='Status', value='**Pronto para Colheita IMEDIATAMENTE!**', inline=False)
     
@@ -1113,9 +1130,15 @@ async def vdmine(ctx, item_name: str = None, quantidade: int = 1):
 if __name__ == '__main__':
     # O seu token foi mantido aqui.
    
+    # Token não deve ficar no código. Use variável de ambiente `DISCORD_TOKEN`.
+    token = os.getenv('DISCORD_TOKEN')
+    if not token:
+        print('ERRO: Variável de ambiente DISCORD_TOKEN não encontrada. Defina-a e tente novamente.')
+        sys.exit(1)
+
     try:
-        bot.run('MTQzOTM3MjI4NjU2OTIyMjQyNg.GMUVf-.nSbDdy-zSJ_t3MpE6xyizpcgktY4C9jw4nDyV8') 
+        bot.run(token)
     except discord.LoginFailure:
-        print("ERRO: Falha ao fazer login. Verifique se o token do bot está correto.")
+        print('ERRO: Falha ao fazer login. Verifique se o token do bot está correto (e se foi rotacionado).')
     except Exception as e:
-        print(f"Ocorreu um erro ao rodar o bot: {e}")
+        print(f'Ocorreu um erro ao rodar o bot: {e}')

@@ -1,0 +1,13 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Environment
+.env
+
+# Dados do bot
+economia.json
+
+# OS files
+.DS_Store
+.vscode/
